@@ -1,0 +1,29 @@
+{
+  "name": "collaborative-edge-ide",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "build:wasm": "turbo run build:wasm --filter=wasm-core",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md,yml,yaml}\"",
+    "db:migration:up": "turbo run db:migration:up --filter=api-node"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "prettier": "^3.3.0",
+    "typescript": "^5.5.0",
+    "@types/node": "^20.14.0"
+  },
+  "engines": {
+    "node": ">=20.18.0 <25.0.0",
+    "npm": ">=10.0.0"
+  },
+  "packageManager": "npm@10.8.0"
+}

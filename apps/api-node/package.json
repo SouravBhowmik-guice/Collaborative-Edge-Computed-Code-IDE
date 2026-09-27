@@ -1,0 +1,42 @@
+{
+  "name": "@collaborative-ide/api-node",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "eslint src --ext .ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "db:migration:up": "tsx scripts/migrate.ts up",
+    "db:migration:down": "tsx scripts/migrate.ts down",
+    "db:migration:create": "tsx scripts/migrate.ts create"
+  },
+  "dependencies": {
+    "@collaborative-ide/shared-types": "*",
+    "@fastify/cors": "^9.0.0",
+    "@fastify/helmet": "^11.0.0",
+    "@fastify/jwt": "^8.0.0",
+    "@fastify/rate-limit": "^9.0.0",
+    "@fastify/swagger": "^8.0.0",
+    "@fastify/swagger-ui": "^3.0.0",
+    "fastify": "^4.28.0",
+    "mongodb": "^6.8.0",
+    "zod": "^3.23.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "bcryptjs": "^2.4.3",
+    "pino": "^9.0.0",
+    "pino-pretty": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.14.0",
+    "tsx": "^4.16.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0",
+    "eslint": "^9.0.0"
+  }
+}

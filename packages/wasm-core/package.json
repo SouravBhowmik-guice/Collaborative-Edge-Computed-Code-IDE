@@ -1,0 +1,10 @@
+{
+  "name": "@collaborative-ide/wasm-core",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "./build.sh",
+    "clean": "rm -rf build"
+  },
+  "devDependencies": {}
+}

@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # MongoDB
+  mongodb:
+    image: mongo:7
+    container_name: ide-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ide
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Supabase (using local development stack)
+  # Note: For full Supabase local dev, use `supabase start` CLI
+  # This is a minimal Postgres with pgvector for RAG
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: ide-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ide
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ide"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Node.js API
+  api-node:
+    build:
+      context: ..
+      dockerfile: apps/api-node/Dockerfile
+    container_name: ide-api-node
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      MONGODB_URI: mongodb://mongodb:27017/ide
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      JWT_SECRET: ${JWT_SECRET}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      BEDROCK_MODEL_ID: ${BEDROCK_MODEL_ID}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ../apps/api-node:/app/apps/api-node
+      - ../packages/shared-types:/app/packages/shared-types
+
+  # Python AI Service
+  api-python:
+    build:
+      context: ..
+      dockerfile: apps/api-python/Dockerfile
+    container_name: ide-api-python
+    ports:
+      - "8000:8000"
+    environment:
+      ENVIRONMENT: development
+      PORT: 8000
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      PGVECTOR_CONNECTION_STRING: postgresql://postgres:postgres@postgres:5432/ide
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      BEDROCK_MODEL_ID: ${BEDROCK_MODEL_ID}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ../apps/api-python:/app/apps/api-python
+
+volumes:
+  mongodb_data:
+  postgres_data:

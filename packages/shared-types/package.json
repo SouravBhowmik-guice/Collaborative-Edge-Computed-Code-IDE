@@ -16,6 +16,10 @@
     "./ws": {
       "types": "./dist/ws.d.ts",
       "default": "./dist/ws.js"
+    },
+    "./config": {
+      "types": "./dist/config.d.ts",
+      "default": "./dist/config.js"
     }
   },
   "scripts": {

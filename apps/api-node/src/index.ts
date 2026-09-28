@@ -10,7 +10,11 @@ import { registerPlugins } from './plugins';
 import { connectMongoDB, closeMongoDB } from './services/mongodb';
 import { logger } from './utils/logger';
 
-async function buildApp(): Promise<FastifyInstance> {
+interface BuildAppOptions {
+  disableSwagger?: boolean;
+}
+
+async function buildApp(options: BuildAppOptions = {}): Promise<FastifyInstance> {
   const config = getConfig();
   const app = Fastify({
     logger: config.NODE_ENV === 'development' ? {
@@ -25,7 +29,7 @@ async function buildApp(): Promise<FastifyInstance> {
   });
 
   // Register plugins (CORS, Helmet, JWT, Rate Limit, Swagger)
-  await registerPlugins(app);
+  await registerPlugins(app, options.disableSwagger);
 
   // Register routes
   await registerRoutes(app);

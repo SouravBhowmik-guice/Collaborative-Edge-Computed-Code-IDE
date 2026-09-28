@@ -13,7 +13,7 @@ import swaggerUI from '@fastify/swagger-ui';
 import { getConfig } from '@collaborative-ide/shared-types/config';
 import { verifySupabaseJWT } from './auth';
 
-export async function registerPlugins(app: FastifyInstance): Promise<void> {
+export async function registerPlugins(app: FastifyInstance, disableSwagger = false): Promise<void> {
   const config = getConfig();
 
   // CORS
@@ -61,58 +61,60 @@ export async function registerPlugins(app: FastifyInstance): Promise<void> {
     }
   });
 
-  // Swagger/OpenAPI Documentation
-  await app.register(swagger, {
-    openapi: {
-      info: {
-        title: 'Collaborative IDE - Node API',
-        description: 'REST API for project management, authentication, and file operations',
-        version: '0.0.1',
-      },
-      servers: [
-        { url: `http://localhost:${config.PORT}`, description: 'Development' },
-      ],
-      tags: [
-        { name: 'Auth', description: 'Authentication endpoints' },
-        { name: 'Projects', description: 'Project management' },
-        { name: 'Files', description: 'File operations' },
-        { name: 'Health', description: 'Health checks' },
-      ],
-      components: {
-        securitySchemes: {
-          bearerAuth: {
-            type: 'http',
-            scheme: 'bearer',
-            bearerFormat: 'JWT',
-          },
+  // Swagger/OpenAPI Documentation (disabled for tests)
+  if (!disableSwagger) {
+    await app.register(swagger, {
+      openapi: {
+        info: {
+          title: 'Collaborative IDE - Node API',
+          description: 'REST API for project management, authentication, and file operations',
+          version: '0.0.1',
         },
-        schemas: {
-          Error: {
-            type: 'object',
-            properties: {
-              error: {
-                type: 'object',
-                properties: {
-                  code: { type: 'string' },
-                  message: { type: 'string' },
-                  details: { type: 'object' },
+        servers: [
+          { url: `http://localhost:${config.PORT}`, description: 'Development' },
+        ],
+        tags: [
+          { name: 'Auth', description: 'Authentication endpoints' },
+          { name: 'Projects', description: 'Project management' },
+          { name: 'Files', description: 'File operations' },
+          { name: 'Health', description: 'Health checks' },
+        ],
+        components: {
+          securitySchemes: {
+            bearerAuth: {
+              type: 'http',
+              scheme: 'bearer',
+              bearerFormat: 'JWT',
+            },
+          },
+          schemas: {
+            Error: {
+              type: 'object',
+              properties: {
+                error: {
+                  type: 'object',
+                  properties: {
+                    code: { type: 'string' },
+                    message: { type: 'string' },
+                    details: { type: 'object' },
+                  },
                 },
+                requestId: { type: 'string', format: 'uuid' },
+                timestamp: { type: 'string', format: 'date-time' },
               },
-              requestId: { type: 'string', format: 'uuid' },
-              timestamp: { type: 'string', format: 'date-time' },
             },
           },
         },
+        security: [{ bearerAuth: [] }],
       },
-      security: [{ bearerAuth: [] }],
-    },
-  });
+    });
 
-  await app.register(swaggerUI, {
-    routePrefix: '/documentation',
-    uiConfig: {
-      docExpansion: 'list',
-      deepLinking: true,
-    },
-  });
+    await app.register(swaggerUI, {
+      routePrefix: '/documentation',
+      uiConfig: {
+        docExpansion: 'list',
+        deepLinking: true,
+      },
+    });
+  }
 }

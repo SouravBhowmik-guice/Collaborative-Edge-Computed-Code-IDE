@@ -6,6 +6,7 @@ import { FastifyInstance } from 'fastify';
 import { authRoutes } from './auth';
 import { projectRoutes } from './projects';
 import { fileRoutes } from './files';
+import { collabRoutes } from './collab';
 
 export async function registerRoutes(app: FastifyInstance): Promise<void> {
   // Auth routes (public)
@@ -16,6 +17,7 @@ export async function registerRoutes(app: FastifyInstance): Promise<void> {
     // Add authentication hook
     protectedApp.addHook('preHandler', protectedApp.authenticate);
 
+    await protectedApp.register(collabRoutes, { prefix: '/api/v1/collab' });
     await protectedApp.register(projectRoutes, { prefix: '/api/v1/projects' });
     await protectedApp.register(fileRoutes, { prefix: '/api/v1/projects/:projectId/files' });
   });

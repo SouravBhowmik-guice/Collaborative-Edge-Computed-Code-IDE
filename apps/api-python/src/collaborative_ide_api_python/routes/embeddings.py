@@ -6,9 +6,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
-from src.services.embeddings import EmbeddingsService
-from src.config import get_settings
-from src.utils.logger import get_logger
+from collaborative_ide_api_python.services.embeddings import EmbeddingsService
+from collaborative_ide_api_python.config import get_settings
+from collaborative_ide_api_python.utils.logger import get_logger
 
 logger = get_logger(__name__)
 settings = get_settings()

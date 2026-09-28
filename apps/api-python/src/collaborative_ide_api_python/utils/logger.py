@@ -4,7 +4,7 @@ Logger Utility
 
 import logging
 import sys
-from src.config import get_settings
+from collaborative_ide_api_python.config import get_settings
 
 settings = get_settings()
 

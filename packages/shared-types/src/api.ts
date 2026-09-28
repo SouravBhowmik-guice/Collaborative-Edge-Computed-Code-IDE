@@ -30,7 +30,7 @@ export const UserSchema = z.object({
 export type User = z.infer<typeof UserSchema>;
 
 export const AuthTokensSchema = z.object({
-  accessToken: z.string().jwt(),
+  accessToken: z.string().min(1),
   refreshToken: z.string().min(1),
   expiresIn: z.number().int().positive(),
 });
@@ -52,7 +52,12 @@ export const LoginRequestSchema = z.object({
 export type LoginRequest = z.infer<typeof LoginRequestSchema>;
 
 export const LoginResponseSchema = z.object({
-  user: UserSchema.omit({ passwordHash: true }),
+  user: z.object({
+    _id: ObjectIdSchema,
+    email: z.string().email(),
+    supabaseId: z.string().uuid(),
+    createdAt: ISODateSchema,
+  }),
   tokens: AuthTokensSchema,
 });
 

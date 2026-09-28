@@ -11,10 +11,10 @@ import json
 import uuid
 import time
 
-from src.services.bedrock import BedrockService
-from src.services.rag import RAGService
-from src.config import get_settings
-from src.utils.logger import get_logger
+from collaborative_ide_api_python.services.bedrock import BedrockService
+from collaborative_ide_api_python.services.rag import RAGService
+from collaborative_ide_api_python.config import get_settings
+from collaborative_ide_api_python.utils.logger import get_logger
 
 logger = get_logger(__name__)
 settings = get_settings()

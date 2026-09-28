@@ -338,4 +338,49 @@ export async function fileRoutes(app: FastifyInstance): Promise<void> {
       return reply.send({ success: true });
     }
   );
+
+  // Get raw file content (for WASM execution)
+  app.get<{ Params: z.infer<typeof FilePathParamsSchema> }>(
+    '/:path/raw',
+    {
+      schema: {
+        params: FilePathParamsSchema,
+        response: {
+          200: z.object({ content: z.string() }),
+          404: { $ref: 'Error#' },
+        },
+        tags: ['Files'],
+        summary: 'Get raw file content for execution',
+        security: [{ bearerAuth: [] }],
+      },
+    },
+    async (request: FastifyRequest<{ Params: z.infer<typeof FilePathParamsSchema> }>, reply: FastifyReply) => {
+      const userId = request.user!.id;
+      const { projectId, path } = request.params;
+
+      const hasAccess = await verifyProjectAccess(projectId, userId);
+      if (!hasAccess) {
+        return reply.status(404).send({
+          error: { code: 'NOT_FOUND', message: 'Project not found' },
+          requestId: request.id,
+          timestamp: new Date().toISOString(),
+        });
+      }
+
+      const file = await files.findOne({
+        projectId: new ObjectId(projectId),
+        path,
+      });
+
+      if (!file) {
+        return reply.status(404).send({
+          error: { code: 'NOT_FOUND', message: 'File not found' },
+          requestId: request.id,
+          timestamp: new Date().toISOString(),
+        });
+      }
+
+      return reply.send({ content: file.content });
+    }
+  );
 }

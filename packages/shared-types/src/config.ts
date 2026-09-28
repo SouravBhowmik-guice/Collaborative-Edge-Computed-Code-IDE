@@ -93,11 +93,11 @@ export type FeatureFlags = z.infer<typeof FeatureFlagsSchema>;
 
 export function getFeatureFlags(): FeatureFlags {
   return FeatureFlagsSchema.parse({
-    enableWasmExecution: process.env.ENABLE_WASM !== 'false',
-    enableMultiplayer: process.env.ENABLE_MULTIPLAYER !== 'false',
-    enableAIChat: process.env.ENABLE_AI !== 'false',
-    enableArchitectureCanvas: process.env.ENABLE_CANVAS === 'true',
-    enableRAG: process.env.ENABLE_RAG !== 'false',
-    debugMode: process.env.DEBUG === 'true',
+    enableWasmExecution: process.env['ENABLE_WASM'] !== 'false',
+    enableMultiplayer: process.env['ENABLE_MULTIPLAYER'] !== 'false',
+    enableAIChat: process.env['ENABLE_AI'] !== 'false',
+    enableArchitectureCanvas: process.env['ENABLE_CANVAS'] === 'true',
+    enableRAG: process.env['ENABLE_RAG'] !== 'false',
+    debugMode: process.env['DEBUG'] === 'true',
   });
 }

@@ -6,8 +6,8 @@ import boto3
 import json
 import asyncio
 from typing import AsyncGenerator, List, Dict, Any, Optional
-from src.config import get_settings
-from src.utils.logger import get_logger
+from collaborative_ide_api_python.config import get_settings
+from collaborative_ide_api_python.utils.logger import get_logger
 
 logger = get_logger(__name__)
 settings = get_settings()

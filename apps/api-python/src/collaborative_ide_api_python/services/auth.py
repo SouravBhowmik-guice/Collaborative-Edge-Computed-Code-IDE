@@ -6,8 +6,8 @@ Verifies tokens shared with Node.js API
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
-from src.config import get_settings
-from src.utils.logger import get_logger
+from collaborative_ide_api_python.config import get_settings
+from collaborative_ide_api_python.utils.logger import get_logger
 
 logger = get_logger(__name__)
 settings = get_settings()

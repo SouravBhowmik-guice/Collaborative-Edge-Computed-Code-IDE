@@ -6,7 +6,22 @@ import { FastifyInstance } from 'fastify';
 import { getDb } from '../services/mongodb';
 
 export async function collabRoutes(app: FastifyInstance): Promise<void> {
-  app.post('/health', async (request, reply) => {
+  app.post('/health', {
+    schema: {
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            status: { type: 'string' },
+            service: { type: 'string' },
+            deps: { type: 'array' },
+            requestId: { type: 'string' },
+            timestamp: { type: 'string' },
+          },
+        },
+      },
+    },
+  }, async (request, reply) => {
     const db = await getDb();
     let mongoOk = false;
     try {

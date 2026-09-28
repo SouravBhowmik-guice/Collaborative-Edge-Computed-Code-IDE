@@ -9,10 +9,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from sse_starlette.sse import EventSourceResponse
 import uvicorn
 
-from src.config import get_settings
-from src.routes import ai, embeddings, health
-from src.services.auth import verify_jwt_token
-from src.utils.logger import get_logger
+from collaborative_ide_api_python.config import get_settings
+from collaborative_ide_api_python.routes import ai, embeddings, health
+from collaborative_ide_api_python.services.auth import verify_jwt_token
+from collaborative_ide_api_python.utils.logger import get_logger
 
 logger = get_logger(__name__)
 settings = get_settings()

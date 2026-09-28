@@ -33,7 +33,7 @@ export async function connectMongoDB(uri: string): Promise<Db> {
   }
 }
 
-async function createIndexes(database: Db): Promise<void> {
+export async function createIndexes(database: Db): Promise<void> {
   // Users collection
   const users = database.collection('users');
   await users.createIndex({ email: 1 }, { unique: true });

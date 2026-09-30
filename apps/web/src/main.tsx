@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { AppShell } from './layout/AppShell';
+import { AuthProvider } from './hooks/useAuth';
+import './index.css';
 
 function App() {
   return (
-    <div className="App">
-      <h1>Collaborative IDE</h1>
-      <p>Welcome to the IDE frontend</p>
-    </div>
+    <AuthProvider>
+      <AppShell />
+    </AuthProvider>
   );
 }
 
@@ -19,7 +21,6 @@ function mount() {
   );
 }
 
-// Only mount when run directly (not imported)
 if (typeof document !== 'undefined') {
   mount();
 }

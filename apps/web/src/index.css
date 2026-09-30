@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@theme {
+  --color-app-bg: #0D1117;
+  --color-editor-bg: #161B22;
+  --color-sidebar-bg: #010409;
+  --color-accent: #2F81F7;
+  --color-text: #E6EDF3;
+  --color-muted: #8B949E;
+  --color-success: #3FB950;
+  --color-warning: #D29922;
+  --color-error: #F85149;
+  --color-ai: #A371F7;
+
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+@layer base {
+  :root {
+    --app-bg: var(--color-app-bg);
+    --editor-bg: var(--color-editor-bg);
+    --sidebar-bg: var(--color-sidebar-bg);
+    --accent: var(--color-accent);
+    --text: var(--color-text);
+    --muted: var(--color-muted);
+    --success: var(--color-success);
+    --warning: var(--color-warning);
+    --error: var(--color-error);
+    --ai: var(--color-ai);
+  }
+
+  /* Inline completion ghost text styling */
+  .inline-completion-ghost {
+    position: relative;
+  }
+
+  .inline-completion-ghost::after {
+    content: attr(data-content);
+    color: var(--muted) !important;
+    opacity: 0.5;
+    font-style: italic;
+    pointer-events: none;
+    white-space: pre;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 100;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--sidebar-bg);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--muted);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text);
+  }
+
+  /* Selection styling */
+  ::selection {
+    background: var(--accent);
+    color: var(--text);
+  }
+
+  /* Focus visible */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Animation for loading spinner */
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}

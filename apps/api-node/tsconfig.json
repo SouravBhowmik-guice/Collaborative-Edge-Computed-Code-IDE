@@ -7,7 +7,7 @@
     "declaration": true,
     "declarationMap": true,
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -23,6 +23,6 @@
       "@collaborative-ide/shared-types": ["../../packages/shared-types/src"]
     }
   },
-  "include": ["src/**/*", "scripts/**/*"],
+  "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

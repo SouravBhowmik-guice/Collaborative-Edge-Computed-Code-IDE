@@ -1,25 +1,7 @@
 version: '3.8'
 
 services:
-  # MongoDB
-  mongodb:
-    image: mongo:7
-    container_name: ide-mongodb
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_DATABASE: ide
-    volumes:
-      - mongodb_data:/data/db
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Supabase (using local development stack)
-  # Note: For full Supabase local dev, use `supabase start` CLI
-  # This is a minimal Postgres with pgvector for RAG
+  # PostgreSQL with pgvector for RAG
   postgres:
     image: pgvector/pgvector:pg16
     container_name: ide-postgres
@@ -37,6 +19,38 @@ services:
       timeout: 5s
       retries: 5
 
+  # Supabase (local development stack)
+  # Uses official Supabase local dev image
+  supabase:
+    image: supabase/supabase:v2.19.4
+    container_name: ide-supabase
+    ports:
+      - "54321:54321"  # Studio
+      - "54322:54322"  # Auth
+      - "54323:54323"  # Realtime
+      - "54324:54324"  # REST
+      - "54325:54325"  # Storage
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-token-with-at-least-32-characters}
+      ANON_KEY: ${SUPABASE_ANON_KEY:-your-anon-key}
+      SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-your-service-role-key}
+      SITE_URL: http://localhost:3000
+      ADDITIONAL_REDIRECT_URLS: http://localhost:5173
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   # Node.js API
   api-node:
     build:
@@ -49,7 +63,7 @@ services:
       NODE_ENV: development
       PORT: 3001
       MONGODB_URI: mongodb://mongodb:27017/ide
-      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_URL: ${SUPABASE_URL:-http://supabase:54321}
       SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
       SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
       JWT_SECRET: ${JWT_SECRET}
@@ -60,7 +74,7 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
-      postgres:
+      supabase:
         condition: service_healthy
     volumes:
       - ../apps/api-node:/app/apps/api-node
@@ -77,7 +91,7 @@ services:
     environment:
       ENVIRONMENT: development
       PORT: 8000
-      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_URL: ${SUPABASE_URL:-http://supabase:54321}
       SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
       PGVECTOR_CONNECTION_STRING: postgresql://postgres:postgres@postgres:5432/ide
       AWS_REGION: ${AWS_REGION}
